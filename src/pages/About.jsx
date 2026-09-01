@@ -1,0 +1,1 @@
+const About = () => { return <div className="container" style={{padding: '5rem 1.5rem'}}><h1 className="section-title">About <span>MAASA</span></h1><p style={{textAlign: 'center'}}>Coming soon...</p></div>; }; export default About;

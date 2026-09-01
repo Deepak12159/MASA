@@ -1,0 +1,64 @@
+import { Routes, Route, Outlet } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import About from './pages/About';
+import Faculty from './pages/Faculty';
+import Events from './pages/Events';
+import Archive from './pages/Archive';
+import Achievement from './pages/Achievement';
+import Media from './pages/Media';
+import Contact from './pages/Contact';
+
+// New Admin imports
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+import DashboardLayout from './pages/Admin/DashboardLayout';
+import Overview from './pages/Admin/Overview';
+import ManageEvents from './pages/Admin/ManageEvents';
+import ManageMedia from './pages/Admin/ManageMedia';
+
+// Create a simple PublicLayout wrapper
+const PublicLayout = () => {
+  return (
+    <>
+      <Navbar />
+      <div className="page-wrapper">
+        <Outlet />
+      </div>
+      <Footer />
+    </>
+  );
+};
+
+function App() {
+  return (
+    <Routes>
+      {/* Admin Dashboard Routes (No public Navbar/Footer here) */}
+      <Route path="/admin" element={
+        <ProtectedRoute>
+          <DashboardLayout />
+        </ProtectedRoute>
+      }>
+        <Route index element={<Overview />} />
+        <Route path="events" element={<ManageEvents />} />
+        <Route path="media" element={<ManageMedia />} />
+      </Route>
+
+      {/* Public Routes with standard layout */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/faculty" element={<Faculty />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/archive" element={<Archive />} />
+        <Route path="/achievement" element={<Achievement />} />
+        <Route path="/media" element={<Media />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+      </Route>
+    </Routes>
+  );
+}
+
+export default App;
