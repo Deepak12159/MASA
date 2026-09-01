@@ -32,12 +32,13 @@ const Events = () => {
   const { events } = useContext(DataContext);
   const ongoing = events.filter(e => e.status === 'ongoing');
   const upcoming = events.filter(e => e.status === 'upcoming');
+  const past = events.filter(e => e.status === 'archive' || e.status === 'past');
 
   return (
     <div className="container" style={{ paddingTop: '100px', minHeight: '80vh', paddingBottom: '100px' }}>
       <div className="section-header-modern">
         <h2 className="text-gradient">MAASA Events</h2>
-        <p>Explore all ongoing and upcoming tournaments.</p>
+        <p>Explore all ongoing, upcoming, and past tournaments.</p>
       </div>
 
       {ongoing.length > 0 && (
@@ -54,6 +55,15 @@ const Events = () => {
           <h3 style={{ color: 'white', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Upcoming Events</h3>
           <div className="premium-grid">
             {upcoming.map(event => <EventCard key={event.id} event={event} />)}
+          </div>
+        </div>
+      )}
+
+      {past.length > 0 && (
+        <div style={{ marginTop: '3rem' }}>
+          <h3 style={{ color: 'white', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Past Events (Archive)</h3>
+          <div className="premium-grid">
+            {past.map(event => <EventCard key={event.id} event={event} />)}
           </div>
         </div>
       )}

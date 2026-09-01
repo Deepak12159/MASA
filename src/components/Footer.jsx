@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Linkedin } from 'lucide-react';
 import './Footer.css';
 
 const Footer = () => {
@@ -14,8 +14,8 @@ const Footer = () => {
             Empowering students through technology and innovation at Medicaps University. Join our athletic community.
           </p>
           <div className="social-links">
-            <a href="#" className="social-icon">IG</a>
-            <a href="#" className="social-icon">IN</a>
+            <a href="#" className="social-icon"><Instagram size={20} /></a>
+            <a href="#" className="social-icon"><Linkedin size={20} /></a>
           </div>
         </div>
 
@@ -33,7 +33,7 @@ const Footer = () => {
           <ul className="contact-info">
             <li>
               <MapPin size={18} className="contact-icon" />
-              <span>Medicaps University<br/>AB Road, Pigdamber, Rau<br/>Indore, MP 453331, India</span>
+              <span>Medicaps University<br />AB Road, Pigdamber, Rau<br />Indore, MP 453331, India</span>
             </li>
             <li>
               <Mail size={18} className="contact-icon" />
@@ -41,12 +41,12 @@ const Footer = () => {
             </li>
             <li>
               <Phone size={18} className="contact-icon" />
-              <span>+91 731 4259500</span>
+              <span>+91 8319780454</span>
             </li>
           </ul>
         </div>
       </div>
-      
+
       <div className="footer-bottom">
         <div className="container bottom-content">
           <p>&copy; 2026 MAASA, Medicaps University. All rights reserved.</p>
