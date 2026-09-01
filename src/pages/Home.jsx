@@ -93,10 +93,6 @@ const Home = () => {
           variants={stagger}
           style={{ y }}
         >
-          <motion.div variants={fadeUp} className="hero-badge-modern">
-            <span className="live-dot"></span>
-            Athletics & Sports Association
-          </motion.div>
           
           <motion.h1 variants={fadeUp} className="hero-title-modern">
             Forge Your Legacy<br/>
@@ -108,12 +104,9 @@ const Home = () => {
           </motion.p>
           
           <motion.div variants={fadeUp} className="hero-actions-modern">
-            <button className="btn-glow-primary">
-              Explore Portal <ArrowRight size={18} />
-            </button>
-            <button className="btn-glow-secondary">
-              Join the Team
-            </button>
+            <Link to="/events" className="btn-glow-primary">
+              Events <ArrowRight size={18} />
+            </Link>
           </motion.div>
         </motion.div>
 

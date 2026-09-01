@@ -3,12 +3,12 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import About from './pages/About';
-import Faculty from './pages/Faculty';
+import Members from './pages/Members';
 import Events from './pages/Events';
-import Archive from './pages/Archive';
+
 import Achievement from './pages/Achievement';
 import Media from './pages/Media';
-import Contact from './pages/Contact';
+
 
 // New Admin imports
 import Login from './pages/Login';
@@ -49,12 +49,12 @@ function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/faculty" element={<Faculty />} />
+        <Route path="/members" element={<Members />} />
         <Route path="/events" element={<Events />} />
-        <Route path="/archive" element={<Archive />} />
+
         <Route path="/achievement" element={<Achievement />} />
         <Route path="/media" element={<Media />} />
-        <Route path="/contact" element={<Contact />} />
+
         <Route path="/login" element={<Login />} />
       </Route>
     </Routes>
