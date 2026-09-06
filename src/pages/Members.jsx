@@ -53,9 +53,9 @@ const AccordionSection = ({ title, icon: Icon, color, members, defaultOpen = fal
 
   return (
     <div style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', overflow: 'hidden', transition: 'all 0.3s ease' }}>
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        style={{ 
+        style={{
           width: '100%', padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           background: isOpen ? 'rgba(255,255,255,0.03)' : 'transparent', border: 'none', color: 'white', cursor: 'pointer', textAlign: 'left',
           transition: 'all 0.2s ease'
@@ -88,35 +88,35 @@ const Members = () => {
       </div>
 
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        <AccordionSection 
-          title="Faculty Coordinators" 
-          icon={Shield} 
-          color="blue" 
-          members={dummyData.faculty} 
+        <AccordionSection
+          title="Faculty Coordinators"
+          icon={Shield}
+          color="blue"
+          members={dummyData.faculty}
           defaultOpen={true}
         />
-        
-        <AccordionSection 
-          title="Core Members (3rd & 4th Year)" 
-          icon={Star} 
-          color="purple" 
-          members={dummyData.core} 
+
+        <AccordionSection
+          title="Core Members (3rd & 4th Year)"
+          icon={Star}
+          color="purple"
+          members={dummyData.core}
           defaultOpen={false}
         />
-        
-        <AccordionSection 
-          title="Team Members (1st & 2nd Year)" 
-          icon={Users} 
-          color="green" 
-          members={dummyData.team} 
+
+        <AccordionSection
+          title="Team Members (1st & 2nd Year)"
+          icon={Users}
+          color="green"
+          members={dummyData.team}
           defaultOpen={false}
         />
-        
-        <AccordionSection 
-          title="Alumni Directory" 
-          icon={GraduationCap} 
-          color="orange" 
-          members={dummyData.alumni} 
+
+        <AccordionSection
+          title="Alumni Directory"
+          icon={GraduationCap}
+          color="orange"
+          members={dummyData.alumni}
           defaultOpen={false}
         />
       </div>
