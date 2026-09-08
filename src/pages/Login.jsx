@@ -11,11 +11,11 @@ const Login = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     
-    const result = login(email, password);
+    const result = await login(email, password);
     if (result.success) {
       navigate('/admin'); // Redirect to dashboard
     } else {
@@ -32,13 +32,7 @@ const Login = () => {
             <p>Authorized Personnel Only</p>
           </div>
           
-          <div className="login-hints">
-            <p className="hint-title">Demo Accounts:</p>
-            <code>tech@maasa.com</code> (Technical)<br/>
-            <code>sir@maasa.com</code> (Faculty)<br/>
-            <code>admin@maasa.com</code> (Superuser)<br/>
-            <small>Password for all: <i>password123</i></small>
-          </div>
+
 
           <form onSubmit={handleLogin} className="login-form">
             {error && <div className="error-msg"><AlertCircle size={16}/> {error}</div>}

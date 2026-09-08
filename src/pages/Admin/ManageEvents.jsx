@@ -1,24 +1,44 @@
 import React, { useContext, useState } from 'react';
 import { DataContext } from '../../context/DataContext';
-import { Trash2, Plus, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Plus, Edit2 } from 'lucide-react';
 
 const ManageEvents = () => {
-  const { events, addEvent, removeEvent } = useContext(DataContext);
+  const { events, addEvent, updateEvent, removeEvent } = useContext(DataContext);
   const [isAdding, setIsAdding] = useState(false);
+  const [isEditing, setIsEditing] = useState(null); // stores ID of event being edited
   
-  const [newEvent, setNewEvent] = useState({
+  const [formData, setFormData] = useState({
     title: '', status: 'upcoming', date: '', participants: '', desc: '', image: ''
   });
 
+  const resetForm = () => {
+    setFormData({ title: '', status: 'upcoming', date: '', participants: '', desc: '', image: '' });
+    setIsAdding(false);
+    setIsEditing(null);
+  };
+
+  const handleEditClick = (event) => {
+    setFormData(event);
+    setIsEditing(event.id);
+    setIsAdding(true); // Open the form
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (newEvent.title && newEvent.date) {
-      addEvent({
-        ...newEvent,
-        image: newEvent.image || 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=800'
-      });
-      setIsAdding(false);
-      setNewEvent({ title: '', status: 'upcoming', date: '', participants: '', desc: '', image: '' });
+    if (formData.title && formData.date) {
+      const payload = {
+        ...formData,
+        image: formData.image || 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=800'
+      };
+      
+      if (isEditing) {
+        // If we have an edit ID, update instead of add
+        const { id, ...dataWithoutId } = payload;
+        updateEvent(isEditing, dataWithoutId);
+      } else {
+        addEvent(payload);
+      }
+      resetForm();
     }
   };
 
@@ -27,29 +47,29 @@ const ManageEvents = () => {
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2>Manage Events</h2>
-          <p className="text-muted">Upload or remove upcoming tournaments.</p>
+          <p className="text-muted">Upload, update or remove upcoming tournaments.</p>
         </div>
-        <button className="btn-glow-primary" style={{ padding: '0.6rem 1.2rem' }} onClick={() => setIsAdding(!isAdding)}>
+        <button className="btn-glow-primary" style={{ padding: '0.6rem 1.2rem' }} onClick={() => isAdding ? resetForm() : setIsAdding(true)}>
           <Plus size={18} /> {isAdding ? 'Cancel' : 'Add Event'}
         </button>
       </div>
 
       {isAdding && (
         <form onSubmit={handleSubmit} className="stat-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
-          <h4>Add New Event</h4>
+          <h4>{isEditing ? 'Edit Event' : 'Add New Event'}</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <input type="text" placeholder="Event Title" className="input-field" value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})} required style={inputStyle}/>
-            <select className="input-field" value={newEvent.status} onChange={e => setNewEvent({...newEvent, status: e.target.value})} style={inputStyle}>
+            <input type="text" placeholder="Event Title" className="input-field" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required style={inputStyle}/>
+            <select className="input-field" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={inputStyle}>
               <option value="upcoming">Upcoming</option>
               <option value="ongoing">Ongoing</option>
               <option value="archive">Archived</option>
             </select>
-            <input type="date" className="input-field" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} required style={inputStyle}/>
-            <input type="text" placeholder="Participants (e.g. 200+)" className="input-field" value={newEvent.participants} onChange={e => setNewEvent({...newEvent, participants: e.target.value})} style={inputStyle}/>
-            <input type="text" placeholder="Image URL (Unsplash)" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} value={newEvent.image} onChange={e => setNewEvent({...newEvent, image: e.target.value})}/>
-            <textarea placeholder="Description" className="input-field" style={{ gridColumn: '1 / -1', height: '80px', ...inputStyle }} value={newEvent.desc} onChange={e => setNewEvent({...newEvent, desc: e.target.value})}></textarea>
+            <input type="date" className="input-field" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} required style={inputStyle}/>
+            <input type="text" placeholder="Participants (e.g. 200+)" className="input-field" value={formData.participants} onChange={e => setFormData({...formData, participants: e.target.value})} style={inputStyle}/>
+            <input type="text" placeholder="Image URL (Unsplash)" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})}/>
+            <textarea placeholder="Description" className="input-field" style={{ gridColumn: '1 / -1', height: '80px', ...inputStyle }} value={formData.desc} onChange={e => setFormData({...formData, desc: e.target.value})}></textarea>
           </div>
-          <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }}>Save Event</button>
+          <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }}>{isEditing ? 'Update Event' : 'Save Event'}</button>
         </form>
       )}
 
@@ -78,6 +98,9 @@ const ManageEvents = () => {
                 </td>
                 <td>{event.date}</td>
                 <td>
+                  <button className="action-btn" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(event)}>
+                    <Edit2 size={16} />
+                  </button>
                   <button className="action-btn btn-danger" onClick={() => removeEvent(event.id)}>
                     <Trash2 size={16} />
                   </button>

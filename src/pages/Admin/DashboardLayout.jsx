@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { LayoutDashboard, Calendar, Image as ImageIcon, LogOut, Settings, Shield } from 'lucide-react';
+import { LayoutDashboard, Calendar, Image as ImageIcon, LogOut, Settings, Shield, Users, Trophy } from 'lucide-react';
 import './Dashboard.css';
 
 const DashboardLayout = () => {
@@ -47,11 +47,19 @@ const DashboardLayout = () => {
           <Link to="/admin/media" className={`nav-item ${location.pathname === '/admin/media' ? 'active' : ''}`}>
             <ImageIcon size={18} /> Manage Media
           </Link>
+          <Link to="/admin/members" className={`nav-item ${location.pathname === '/admin/members' ? 'active' : ''}`}>
+            <Users size={18} /> Manage Members
+          </Link>
+          <Link to="/admin/achievements" className={`nav-item ${location.pathname === '/admin/achievements' ? 'active' : ''}`}>
+            <Trophy size={18} /> Manage Achievements
+          </Link>
           
           {user?.role === 'superuser' && (
-            <Link to="/admin/settings" className="nav-item">
-              <Settings size={18} /> Settings
-            </Link>
+            <>
+              <Link to="/admin/users" className={`nav-item ${location.pathname === '/admin/users' ? 'active' : ''}`}>
+                <Settings size={18} /> Manage Admins
+              </Link>
+            </>
           )}
         </nav>
 

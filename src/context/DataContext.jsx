@@ -1,49 +1,105 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 
 export const DataContext = createContext();
 
-// Initial dummy data with Unsplash images
-const initialEvents = [
-  { id: 1, title: 'Inter-College Cricket Tournament', status: 'ongoing', date: '2026-10-15', participants: '500+', desc: 'Official Medicaps tournament dedicated to advancing sportsmanship.', image: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=800' },
-  { id: 2, title: 'Annual Athletics Meet', status: 'upcoming', date: '2026-11-20', participants: '800+', desc: 'Registrations open for all track & field events.', image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=800' },
-  { id: 3, title: 'State Level Basketball', status: 'archive', date: '2025-08-10', participants: '200+', desc: 'Our men\'s team secured 1st position.', image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800' },
-];
-
-const initialMedia = [
-  { id: 1, type: 'photo', title: 'Cricket Finals', url: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=800' },
-  { id: 2, type: 'photo', title: 'Track and Field', url: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=800' },
-  { id: 3, type: 'photo', title: 'Basketball Team', url: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800' },
-  { id: 4, type: 'photo', title: 'Football Match', url: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=800' },
-];
-
 export const DataProvider = ({ children }) => {
-  const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('maasa_events');
-    return saved ? JSON.parse(saved) : initialEvents;
-  });
-
-  const [media, setMedia] = useState(() => {
-    const saved = localStorage.getItem('maasa_media');
-    return saved ? JSON.parse(saved) : initialMedia;
-  });
-
-  // Save to local storage whenever data changes
-  useEffect(() => {
-    localStorage.setItem('maasa_events', JSON.stringify(events));
-  }, [events]);
+  const [events, setEvents] = useState([]);
+  const [media, setMedia] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [achievements, setAchievements] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem('maasa_media', JSON.stringify(media));
-  }, [media]);
+    fetchEvents();
+    fetchMedia();
+    fetchMembers();
+    fetchAchievements();
+  }, []);
 
-  const addEvent = (event) => setEvents([...events, { ...event, id: Date.now() }]);
-  const removeEvent = (id) => setEvents(events.filter(e => e.id !== id));
+  const fetchEvents = async () => {
+    const { data, error } = await supabase.from('events').select('*').order('date', { ascending: false });
+    if (!error && data) setEvents(data);
+  };
+
+  const fetchMedia = async () => {
+    const { data, error } = await supabase.from('media').select('*'); 
+    if (!error && data) setMedia(data);
+  };
+
+  const fetchMembers = async () => {
+    const { data, error } = await supabase.from('members').select('*');
+    if (!error && data) setMembers(data);
+  };
+
+  const fetchAchievements = async () => {
+    const { data, error } = await supabase.from('achievements').select('*');
+    if (!error && data) setAchievements(data);
+  };
+
+  // --- Events CRUD ---
+  const addEvent = async (event) => {
+    const { data, error } = await supabase.from('events').insert([event]).select();
+    if (!error && data) setEvents([...events, data[0]]);
+  };
+  const updateEvent = async (id, updatedEvent) => {
+    const { data, error } = await supabase.from('events').update(updatedEvent).eq('id', id).select();
+    if (!error && data) setEvents(events.map(e => (e.id === id ? data[0] : e)));
+  };
+  const removeEvent = async (id) => {
+    const { error } = await supabase.from('events').delete().eq('id', id);
+    if (!error) setEvents(events.filter(e => e.id !== id));
+  };
   
-  const addMedia = (item) => setMedia([...media, { ...item, id: Date.now() }]);
-  const removeMedia = (id) => setMedia(media.filter(m => m.id !== id));
+  // --- Media CRUD ---
+  const addMedia = async (item) => {
+    const { data, error } = await supabase.from('media').insert([item]).select();
+    if (!error && data) setMedia([...media, data[0]]);
+  };
+  const updateMedia = async (id, updatedItem) => {
+    const { data, error } = await supabase.from('media').update(updatedItem).eq('id', id).select();
+    if (!error && data) setMedia(media.map(m => (m.id === id ? data[0] : m)));
+  };
+  const removeMedia = async (id) => {
+    const { error } = await supabase.from('media').delete().eq('id', id);
+    if (!error) setMedia(media.filter(m => m.id !== id));
+  };
+
+  // --- Members CRUD ---
+  const addMember = async (member) => {
+    const { data, error } = await supabase.from('members').insert([member]).select();
+    if (!error && data) setMembers([...members, data[0]]);
+  };
+  const updateMember = async (id, updatedMember) => {
+    const { data, error } = await supabase.from('members').update(updatedMember).eq('id', id).select();
+    if (!error && data) setMembers(members.map(m => (m.id === id ? data[0] : m)));
+  };
+  const removeMember = async (id) => {
+    const { error } = await supabase.from('members').delete().eq('id', id);
+    if (!error) setMembers(members.filter(m => m.id !== id));
+  };
+
+  // --- Achievements CRUD ---
+  const addAchievement = async (achievement) => {
+    const { data, error } = await supabase.from('achievements').insert([achievement]).select();
+    if (!error && data) setAchievements([...achievements, data[0]]);
+  };
+  const updateAchievement = async (id, updatedAchievement) => {
+    const { data, error } = await supabase.from('achievements').update(updatedAchievement).eq('id', id).select();
+    if (!error && data) setAchievements(achievements.map(a => (a.id === id ? data[0] : a)));
+  };
+  const removeAchievement = async (id) => {
+    const { error } = await supabase.from('achievements').delete().eq('id', id);
+    if (!error) setAchievements(achievements.filter(a => a.id !== id));
+  };
 
   return (
-    <DataContext.Provider value={{ events, media, addEvent, removeEvent, addMedia, removeMedia }}>
+    <DataContext.Provider value={{ 
+      events, media, members, achievements,
+      addEvent, updateEvent, removeEvent, 
+      addMedia, updateMedia, removeMedia,
+      addMember, updateMember, removeMember,
+      addAchievement, updateAchievement, removeAchievement
+    }}>
       {children}
     </DataContext.Provider>
   );
