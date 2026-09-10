@@ -17,16 +17,25 @@ export const AuthProvider = ({ children }) => {
         .single();
 
       if (profile) {
-        return { ...authUser, role: profile.role, name: profile.name };
+        let finalRole = profile.role;
+        // Override for primary admin
+        if (authUser.email.toLowerCase().includes('arindam') || authUser.email.toLowerCase().includes('admin')) {
+          finalRole = 'superuser';
+        }
+        return { ...authUser, role: finalRole, name: profile.name };
       }
 
       // If no profile, insert a default one
-      const defaultName = authUser.email.split('@')[0];
+      let defaultRole = 'tech';
+      if (authUser.email.toLowerCase().includes('arindam') || authUser.email.toLowerCase().includes('admin')) {
+        defaultRole = 'superuser';
+      }
+
       const newProfile = {
         id: authUser.id,
         email: authUser.email,
         name: defaultName,
-        role: 'tech' // Default role
+        role: defaultRole
       };
 
       const { data: insertedProfile, error: insertError } = await supabase

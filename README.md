@@ -11,7 +11,7 @@
 - **Ultra-Premium Design:** Built with a next-generation "Bento Grid" layout, glassmorphism, dynamic mesh backgrounds, and interactive spotlight hover effects.
 - **Role-Based Access Control (RBAC):** Secure login portals for different hierarchical levels (Technical Team, Faculty, Superuser).
 - **Admin Dashboard:** A sleek, fully functional dashboard to manage (upload/remove) events and media galleries.
-- **Dynamic Data Mocking:** Fully integrated `React Context` and `LocalStorage` architecture allowing complete offline testing of data mutation without a backend.
+- **Dynamic Data Management:** Fully integrated with a real-time **Supabase** backend for secure, persistent data storage (Events, Media, Profiles, Achievements).
 - **Scroll Animations:** Buttery smooth scroll and entrance animations powered by Framer Motion.
 
 ---
@@ -57,19 +57,19 @@ Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
 ---
 
-## 🔐 Admin Dashboard Testing
+## 🔐 Admin Dashboard & Authentication
 
-Since this project currently operates without a live backend database, all user mutations (adding events, deleting media) are persisted locally in your browser's `localStorage`.
+This project uses **Supabase Authentication**. There are no hardcoded dummy accounts for security reasons.
 
-To test the **Admin Dashboard** and **RBAC**, use the following mock credentials on the `/login` page:
-
-| Role | Email Address | Password |
-| :--- | :--- | :--- |
-| **Technical Team** | `tech@maasa.com` | `password123` |
-| **Faculty Coordinator** | `sir@maasa.com` | `password123` |
-| **Superuser** | `admin@maasa.com` | `password123` |
-
-Once logged in, you can add new sporting events or upload media to the gallery. Log out and visit the public site to see your updates live!
+To access the Admin Dashboard:
+1. Create a user account in your Supabase project dashboard (`Authentication` -> `Users` -> `Add User`).
+2. Log in with those credentials on the `/login` page.
+3. Your account will default to the `Technical Team` role.
+4. **To become a Superuser:** Run the following SQL in your Supabase SQL Editor once:
+   ```sql
+   UPDATE profiles SET role = 'superuser' WHERE email = 'your.email@example.com';
+   ```
+5. Once you are a Superuser, you can manage the roles of all other admins directly from the `Manage Admins` page on the dashboard!
 
 ---
 

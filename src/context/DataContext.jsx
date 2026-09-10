@@ -36,10 +36,14 @@ export const DataProvider = ({ children }) => {
     if (!error && data) setAchievements(data);
   };
 
-  // --- Events CRUD ---
   const addEvent = async (event) => {
     const { data, error } = await supabase.from('events').insert([event]).select();
-    if (!error && data) setEvents([...events, data[0]]);
+    if (error) {
+      console.error("Error adding event:", error);
+      alert("Database Error: " + error.message);
+    } else if (data) {
+      setEvents([...events, data[0]]);
+    }
   };
   const updateEvent = async (id, updatedEvent) => {
     const { data, error } = await supabase.from('events').update(updatedEvent).eq('id', id).select();
@@ -50,10 +54,14 @@ export const DataProvider = ({ children }) => {
     if (!error) setEvents(events.filter(e => e.id !== id));
   };
   
-  // --- Media CRUD ---
   const addMedia = async (item) => {
     const { data, error } = await supabase.from('media').insert([item]).select();
-    if (!error && data) setMedia([...media, data[0]]);
+    if (error) {
+      console.error("Error adding media:", error);
+      alert("Database Error: " + error.message);
+    } else if (data) {
+      setMedia([...media, data[0]]);
+    }
   };
   const updateMedia = async (id, updatedItem) => {
     const { data, error } = await supabase.from('media').update(updatedItem).eq('id', id).select();
@@ -92,13 +100,42 @@ export const DataProvider = ({ children }) => {
     if (!error) setAchievements(achievements.filter(a => a.id !== id));
   };
 
+  // --- File Upload ---
+  const uploadFile = async (file, folderName = 'uploads') => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      const filePath = `${folderName}/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('maasa-media')
+        .upload(filePath, file);
+
+      if (error) {
+        alert("Upload Error: " + error.message);
+        throw error;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('maasa-media')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading file:', error.message);
+      return null;
+    }
+  };
+
   return (
     <DataContext.Provider value={{ 
       events, media, members, achievements,
       addEvent, updateEvent, removeEvent, 
       addMedia, updateMedia, removeMedia,
       addMember, updateMember, removeMember,
-      addAchievement, updateAchievement, removeAchievement
+      addAchievement, updateAchievement, removeAchievement,
+      uploadFile
     }}>
       {children}
     </DataContext.Provider>

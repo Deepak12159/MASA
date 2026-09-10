@@ -3,40 +3,53 @@ import { DataContext } from '../../context/DataContext';
 import { Trash2, Plus, Edit2 } from 'lucide-react';
 
 const ManageMedia = () => {
-  const { media, addMedia, updateMedia, removeMedia } = useContext(DataContext);
+  const { media, addMedia, updateMedia, removeMedia, uploadFile } = useContext(DataContext);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(null); // stores ID of item being edited
   
   const [formData, setFormData] = useState({
-    title: '', url: '', type: 'photo'
+    title: '', url: '', type: 'photo', file: null
   });
+  const [uploading, setUploading] = useState(false);
 
   const resetForm = () => {
-    setFormData({ title: '', url: '', type: 'photo' });
+    setFormData({ title: '', url: '', type: 'photo', file: null });
     setIsAdding(false);
     setIsEditing(null);
   };
 
   const handleEditClick = (item) => {
-    setFormData(item);
+    setFormData({ ...item, file: null });
     setIsEditing(item.id);
     setIsAdding(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.title) {
+      setUploading(true);
+
+      let finalUrl = formData.url || 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800';
+
+      if (formData.file) {
+        const uploadedUrl = await uploadFile(formData.file, 'gallery');
+        if (uploadedUrl) {
+          finalUrl = uploadedUrl;
+        }
+      }
+
       const payload = {
-        ...formData,
-        url: formData.url || 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800'
+        title: formData.title,
+        type: formData.type,
+        url: finalUrl
       };
 
       if (isEditing) {
-        const { id, ...dataWithoutId } = payload;
-        updateMedia(isEditing, dataWithoutId);
+        updateMedia(isEditing, payload);
       } else {
         addMedia(payload);
       }
+      setUploading(false);
       resetForm();
     }
   };
@@ -62,9 +75,12 @@ const ManageMedia = () => {
               <option value="photo">Photo</option>
               <option value="video">Video</option>
             </select>
-            <input type="text" placeholder="Media URL (Unsplash/YouTube)" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} value={formData.url} onChange={e => setFormData({...formData, url: e.target.value})}/>
+            <input type="file" accept="image/*,video/*" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} onChange={e => setFormData({...formData, file: e.target.files[0]})} />
+            {formData.url && !formData.file && <p style={{ gridColumn: '1 / -1', fontSize: '0.8rem', color: '#94a3b8' }}>Current file will be kept if no new file is selected.</p>}
           </div>
-          <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }}>{isEditing ? 'Update Media' : 'Save Media'}</button>
+          <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }} disabled={uploading}>
+            {uploading ? 'Uploading...' : (isEditing ? 'Update Media' : 'Save Media')}
+          </button>
         </form>
       )}
 

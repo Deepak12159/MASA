@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Instagram, Linkedin } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import './Footer.css';
 
 const Footer = () => {
@@ -14,8 +14,8 @@ const Footer = () => {
             Empowering students through technology and innovation at Medicaps University. Join our athletic community.
           </p>
           <div className="social-links">
-            <a href="#" className="social-icon"><Instagram size={20} /></a>
-            <a href="#" className="social-icon"><Linkedin size={20} /></a>
+            <a href="#" className="social-icon">IG</a>
+            <a href="#" className="social-icon">IN</a>
           </div>
         </div>
 
