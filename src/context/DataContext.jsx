@@ -8,12 +8,14 @@ export const DataProvider = ({ children }) => {
   const [media, setMedia] = useState([]);
   const [members, setMembers] = useState([]);
   const [achievements, setAchievements] = useState([]);
+  const [aboutContent, setAboutContent] = useState('');
 
   useEffect(() => {
     fetchEvents();
     fetchMedia();
     fetchMembers();
     fetchAchievements();
+    fetchAboutContent();
   }, []);
 
   const fetchEvents = async () => {
@@ -34,6 +36,23 @@ export const DataProvider = ({ children }) => {
   const fetchAchievements = async () => {
     const { data, error } = await supabase.from('achievements').select('*');
     if (!error && data) setAchievements(data);
+  };
+
+  const fetchAboutContent = async () => {
+    const { data, error } = await supabase.from('site_settings').select('value').eq('key', 'about_content').single();
+    if (!error && data) {
+      setAboutContent(data.value);
+    }
+  };
+
+  const updateAboutContent = async (newContent) => {
+    const { error } = await supabase.from('site_settings').update({ value: newContent }).eq('key', 'about_content');
+    if (error) {
+      alert("Error updating About section: " + error.message);
+    } else {
+      setAboutContent(newContent);
+      alert("About section updated successfully!");
+    }
   };
 
   const addEvent = async (event) => {
@@ -143,11 +162,12 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider value={{ 
-      events, media, members, achievements,
+      events, media, members, achievements, aboutContent,
       addEvent, updateEvent, removeEvent, 
       addMedia, updateMedia, removeMedia,
       addMember, updateMember, removeMember,
       addAchievement, updateAchievement, removeAchievement,
+      updateAboutContent,
       uploadFile
     }}>
       {children}

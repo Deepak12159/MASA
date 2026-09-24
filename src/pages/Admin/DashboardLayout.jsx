@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { LayoutDashboard, Calendar, Image as ImageIcon, LogOut, Settings, Shield, Users, Trophy } from 'lucide-react';
+import { LayoutDashboard, Calendar, Image as ImageIcon, LogOut, Settings, Shield, Users, Trophy, FileText } from 'lucide-react';
 import './Dashboard.css';
 
 const DashboardLayout = () => {
@@ -61,6 +61,11 @@ const DashboardLayout = () => {
               </Link>
             </>
           )}
+
+          {/* Accessible by all admins (Superuser, Faculty, Tech) */}
+          <Link to="/admin/about" className={`nav-item ${location.pathname === '/admin/about' ? 'active' : ''}`}>
+            <FileText size={18} /> Edit About Us
+          </Link>
         </nav>
 
         <div className="sidebar-footer">

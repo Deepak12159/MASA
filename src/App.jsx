@@ -20,6 +20,7 @@ import ManageMedia from './pages/Admin/ManageMedia';
 import ManageMembers from './pages/Admin/ManageMembers';
 import ManageAchievements from './pages/Admin/ManageAchievements';
 import ManageAdmins from './pages/Admin/ManageAdmins';
+import ManageAbout from './pages/Admin/ManageAbout';
 
 // Create a simple PublicLayout wrapper
 const PublicLayout = () => {
@@ -49,6 +50,7 @@ function App() {
         <Route path="members" element={<ManageMembers />} />
         <Route path="achievements" element={<ManageAchievements />} />
         <Route path="users" element={<ManageAdmins />} />
+        <Route path="about" element={<ManageAbout />} />
       </Route>
 
       {/* Public Routes with standard layout */}
