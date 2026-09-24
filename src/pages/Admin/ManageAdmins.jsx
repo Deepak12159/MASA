@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { supabase } from '../../supabaseClient';
 import { AuthContext } from '../../context/AuthContext';
-import { Edit2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 
 const ManageAdmins = () => {
   const { user } = useContext(AuthContext);
@@ -9,7 +9,7 @@ const ManageAdmins = () => {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   
-  const [formData, setFormData] = useState({ name: '', role: '' });
+  const [formData, setFormData] = useState({ name: '', role: '', is_active: true });
 
   useEffect(() => {
     fetchProfiles();
@@ -25,7 +25,7 @@ const ManageAdmins = () => {
   };
 
   const handleEditClick = (profile) => {
-    setFormData({ name: profile.name, role: profile.role });
+    setFormData({ name: profile.name, role: profile.role, is_active: profile.is_active ?? true });
     setEditingId(profile.id);
   };
 
@@ -43,15 +43,26 @@ const ManageAdmins = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to terminate this user? They will lose their role and access.")) {
+      const { error } = await supabase.from('profiles').delete().eq('id', id);
+      if (!error) {
+        setProfiles(profiles.filter(p => p.id !== id));
+      } else {
+        alert("Error terminating user.");
+      }
+    }
+  };
+
   if (user?.role !== 'superuser') {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Access Denied. Superadmin only.</div>;
+    return <div style={{ padding: '2rem', textAlign: 'center' }}>Access Denied. Superusers only.</div>;
   }
 
   return (
     <div className="manage-page">
       <div className="page-header">
-        <h2>Manage Admins</h2>
-        <p className="text-muted">Change roles and update names for all registered admins.</p>
+        <h2>Manage Users</h2>
+        <p className="text-muted">Change roles and update names for all registered users.</p>
         <p style={{ fontSize: '0.85rem', color: '#ffb020', marginTop: '0.5rem' }}>
           Note: To add a new admin, first create their account in the Supabase Authentication dashboard. Once they log in here, they will appear in this list.
         </p>
@@ -93,9 +104,20 @@ const ManageAdmins = () => {
                           className="input-field" 
                           style={editInputStyle}
                         >
-                          <option value="tech">Technical Team</option>
+                          <option value="technical">Technical Team</option>
                           <option value="faculty">Faculty Coordinator</option>
                           <option value="superuser">Super Admin</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select 
+                          value={formData.is_active} 
+                          onChange={e => setFormData({...formData, is_active: e.target.value === 'true'})} 
+                          className="input-field" 
+                          style={{...editInputStyle, width: '80px', marginLeft: '10px'}}
+                        >
+                          <option value="true">Active</option>
+                          <option value="false">Inactive</option>
                         </select>
                       </td>
                       <td>
@@ -114,11 +136,19 @@ const ManageAdmins = () => {
                         <span className={`badge-${profile.role === 'superuser' ? 'super' : profile.role === 'faculty' ? 'faculty' : 'tech'}`}>
                           {profile.role}
                         </span>
+                        <span className={profile.is_active === false ? 'badge-danger' : 'badge-success'} style={{marginLeft: '10px', fontSize: '0.75rem'}}>
+                          {profile.is_active === false ? 'Inactive' : 'Active'}
+                        </span>
                       </td>
                       <td>
-                        <button className="action-btn" style={{ background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(profile)}>
+                        <button className="action-btn" style={{ background: 'rgba(255,255,255,0.1)', marginRight: '0.5rem' }} onClick={() => handleEditClick(profile)}>
                           <Edit2 size={16} /> Edit
                         </button>
+                        {user.role === 'superuser' && user.id !== profile.id && (
+                          <button className="action-btn btn-danger" onClick={() => handleDelete(profile.id)}>
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </td>
                     </>
                   )}

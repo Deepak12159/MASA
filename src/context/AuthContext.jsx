@@ -17,25 +17,21 @@ export const AuthProvider = ({ children }) => {
         .single();
 
       if (profile) {
-        let finalRole = profile.role;
-        // Override for primary admin
-        if (authUser.email.toLowerCase().includes('arindam') || authUser.email.toLowerCase().includes('admin')) {
-          finalRole = 'superuser';
+        if (profile.is_active === false) {
+          await supabase.auth.signOut();
+          return null;
         }
-        return { ...authUser, role: finalRole, name: profile.name };
+        return { ...authUser, role: profile.role, name: profile.name, is_active: profile.is_active };
       }
 
-      // If no profile, insert a default one
-      let defaultRole = 'tech';
-      if (authUser.email.toLowerCase().includes('arindam') || authUser.email.toLowerCase().includes('admin')) {
-        defaultRole = 'superuser';
-      }
-
+      // If no profile, insert a default one with 'technical'
+      const defaultName = authUser.email.split('@')[0];
       const newProfile = {
         id: authUser.id,
         email: authUser.email,
         name: defaultName,
-        role: defaultRole
+        role: 'technical',
+        is_active: true
       };
 
       const { data: insertedProfile, error: insertError } = await supabase
@@ -45,15 +41,14 @@ export const AuthProvider = ({ children }) => {
         .single();
         
       if (insertedProfile) {
-        return { ...authUser, role: insertedProfile.role, name: insertedProfile.name };
+        return { ...authUser, role: insertedProfile.role, name: insertedProfile.name, is_active: true };
       }
       
-      // Fallback if insert fails
-      return { ...authUser, role: 'tech', name: defaultName };
+      return { ...authUser, role: 'technical', name: defaultName, is_active: true };
       
     } catch (err) {
       console.error("Error fetching profile:", err);
-      return { ...authUser, role: 'tech', name: authUser.email.split('@')[0] };
+      return { ...authUser, role: 'technical', name: authUser.email?.split('@')[0], is_active: true };
     }
   };
 

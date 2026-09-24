@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { DataContext } from '../../context/DataContext';
+import { AuthContext } from '../../context/AuthContext';
 import { Trash2, Plus, Edit2 } from 'lucide-react';
 
 const ManageMedia = () => {
+  const { user } = useContext(AuthContext);
   const { media, addMedia, updateMedia, removeMedia, uploadFile } = useContext(DataContext);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(null); // stores ID of item being edited
@@ -110,9 +112,11 @@ const ManageMedia = () => {
                   <button className="action-btn" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(item)}>
                     <Edit2 size={16} />
                   </button>
-                  <button className="action-btn btn-danger" onClick={() => removeMedia(item.id)}>
-                    <Trash2 size={16} />
-                  </button>
+                  {user?.role !== 'technical' && (
+                    <button className="action-btn btn-danger" onClick={() => removeMedia(item.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

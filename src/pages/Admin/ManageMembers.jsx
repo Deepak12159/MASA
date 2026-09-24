@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { DataContext } from '../../context/DataContext';
+import { AuthContext } from '../../context/AuthContext';
 import { Trash2, Plus, Edit2 } from 'lucide-react';
 
 const ManageMembers = () => {
+  const { user } = useContext(AuthContext);
   const { members, addMember, updateMember, removeMember } = useContext(DataContext);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
@@ -93,9 +95,11 @@ const ManageMembers = () => {
                   <button className="action-btn" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(member)}>
                     <Edit2 size={16} />
                   </button>
-                  <button className="action-btn btn-danger" onClick={() => removeMember(member.id)}>
-                    <Trash2 size={16} />
-                  </button>
+                  {user?.role !== 'technical' && (
+                    <button className="action-btn btn-danger" onClick={() => removeMember(member.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

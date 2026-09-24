@@ -30,7 +30,7 @@ const DashboardLayout = () => {
         </div>
 
         <div className="user-profile">
-          <div className="avatar">{user?.name.charAt(0)}</div>
+          <div className="avatar">{user?.name?.charAt(0) || 'U'}</div>
           <div className="user-info">
             <h4>{user?.name}</h4>
             {getRoleBadge(user?.role)}
@@ -57,7 +57,7 @@ const DashboardLayout = () => {
           {user?.role === 'superuser' && (
             <>
               <Link to="/admin/users" className={`nav-item ${location.pathname === '/admin/users' ? 'active' : ''}`}>
-                <Settings size={18} /> Manage Admins
+                <Settings size={18} /> Manage Users
               </Link>
             </>
           )}

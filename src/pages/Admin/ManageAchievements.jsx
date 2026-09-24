@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { DataContext } from '../../context/DataContext';
+import { AuthContext } from '../../context/AuthContext';
 import { Trash2, Plus, Edit2 } from 'lucide-react';
 
 const ManageAchievements = () => {
+  const { user } = useContext(AuthContext);
   const { achievements, addAchievement, updateAchievement, removeAchievement } = useContext(DataContext);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
@@ -77,9 +79,11 @@ const ManageAchievements = () => {
                   <button className="action-btn" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(ach)}>
                     <Edit2 size={16} />
                   </button>
-                  <button className="action-btn btn-danger" onClick={() => removeAchievement(ach.id)}>
-                    <Trash2 size={16} />
-                  </button>
+                  {user?.role !== 'technical' && (
+                    <button className="action-btn btn-danger" onClick={() => removeAchievement(ach.id)}>
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

@@ -59,14 +59,10 @@ const Navbar = () => {
           </ul>
 
           <div className="nav-actions">
-            {user ? (
+            {user && (
               <Link to="/admin" className="btn-glow-primary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem' }} onClick={closeMenu}>
                 Dashboard
               </Link>
-            ) : (
-              <>
-                <Link to="/login" className="btn-sign-in" onClick={closeMenu}><LogIn size={16} /> Sign In</Link>
-              </>
             )}
           </div>
         </div>
