@@ -89,15 +89,28 @@ export const DataProvider = ({ children }) => {
   // --- Achievements CRUD ---
   const addAchievement = async (achievement) => {
     const { data, error } = await supabase.from('achievements').insert([achievement]).select();
-    if (!error && data) setAchievements([...achievements, data[0]]);
+    if (error) {
+      console.error("Error adding achievement:", error);
+      alert("Database Error: " + error.message);
+    } else if (data) {
+      setAchievements([...achievements, data[0]]);
+    }
   };
   const updateAchievement = async (id, updatedAchievement) => {
     const { data, error } = await supabase.from('achievements').update(updatedAchievement).eq('id', id).select();
-    if (!error && data) setAchievements(achievements.map(a => (a.id === id ? data[0] : a)));
+    if (error) {
+      alert("Database Error: " + error.message);
+    } else if (data) {
+      setAchievements(achievements.map(a => (a.id === id ? data[0] : a)));
+    }
   };
   const removeAchievement = async (id) => {
     const { error } = await supabase.from('achievements').delete().eq('id', id);
-    if (!error) setAchievements(achievements.filter(a => a.id !== id));
+    if (error) {
+      alert("Database Error: " + error.message);
+    } else {
+      setAchievements(achievements.filter(a => a.id !== id));
+    }
   };
 
   // --- File Upload ---
