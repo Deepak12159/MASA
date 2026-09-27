@@ -27,6 +27,7 @@ const EventCard = ({ event }) => (
         <span>👥 {event.participants}</span>
       </div>
     </div>
+    </div>
   </Link>
 );
 
