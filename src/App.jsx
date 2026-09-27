@@ -8,6 +8,8 @@ import Events from './pages/Events';
 
 import Achievement from './pages/Achievement';
 import Media from './pages/Media';
+import EventDetail from './pages/EventDetail';
+import AchievementDetail from './pages/AchievementDetail';
 
 
 // New Admin imports
@@ -59,8 +61,10 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/members" element={<Members />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/events/:id" element={<EventDetail />} />
 
         <Route path="/achievement" element={<Achievement />} />
+        <Route path="/achievement/:id" element={<AchievementDetail />} />
         <Route path="/media" element={<Media />} />
 
         <Route path="/login" element={<Login />} />

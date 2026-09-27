@@ -5,35 +5,54 @@ import { Trash2, Plus, Edit2 } from 'lucide-react';
 
 const ManageMembers = () => {
   const { user } = useContext(AuthContext);
-  const { members, addMember, updateMember, removeMember } = useContext(DataContext);
+  const { members, addMember, updateMember, removeMember, uploadFile } = useContext(DataContext);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
+  const [uploading, setUploading] = useState(false);
   
   const [formData, setFormData] = useState({
-    name: '', role: '', dept_or_year: '', category: 'faculty'
+    name: '', role: '', dept_or_year: '', category: 'faculty', image: '', file: null
   });
 
   const resetForm = () => {
-    setFormData({ name: '', role: '', dept_or_year: '', category: 'faculty' });
+    setFormData({ name: '', role: '', dept_or_year: '', category: 'faculty', image: '', file: null });
     setIsAdding(false);
     setIsEditing(null);
   };
 
   const handleEditClick = (member) => {
-    setFormData(member);
+    setFormData({ ...member, file: null });
     setIsEditing(member.id);
     setIsAdding(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.name && formData.role) {
-      if (isEditing) {
-        const { id, ...dataWithoutId } = formData;
-        updateMember(isEditing, dataWithoutId);
-      } else {
-        addMember(formData);
+      setUploading(true);
+      let finalImageUrl = formData.image;
+      
+      if (formData.file) {
+        const uploadedUrl = await uploadFile(formData.file, 'members');
+        if (uploadedUrl) {
+          finalImageUrl = uploadedUrl;
+        }
       }
+
+      const payload = {
+        name: formData.name,
+        role: formData.role,
+        dept_or_year: formData.dept_or_year,
+        category: formData.category,
+        image: finalImageUrl
+      };
+
+      if (isEditing) {
+        updateMember(isEditing, payload);
+      } else {
+        addMember(payload);
+      }
+      setUploading(false);
       resetForm();
     }
   };
@@ -64,8 +83,12 @@ const ManageMembers = () => {
               <option value="team">Team Member</option>
               <option value="alumni">Alumni</option>
             </select>
+            <input type="file" accept="image/*" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} onChange={e => setFormData({...formData, file: e.target.files[0]})} />
+            {formData.image && !formData.file && <p style={{ gridColumn: '1 / -1', fontSize: '0.8rem', color: '#94a3b8' }}>Current image will be kept if no new file is selected.</p>}
           </div>
-          <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }}>{isEditing ? 'Update Member' : 'Save Member'}</button>
+          <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }} disabled={uploading}>
+            {uploading ? 'Uploading...' : (isEditing ? 'Update Member' : 'Save Member')}
+          </button>
         </form>
       )}
 
@@ -73,6 +96,7 @@ const ManageMembers = () => {
         <table className="data-table">
           <thead>
             <tr>
+              <th>Image</th>
               <th>Name</th>
               <th>Role</th>
               <th>Dept/Year</th>
@@ -83,6 +107,13 @@ const ManageMembers = () => {
           <tbody>
             {members.map(member => (
               <tr key={member.id}>
+                <td>
+                  {member.image ? (
+                    <img src={member.image} alt={member.name} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
+                  )}
+                </td>
                 <td><strong>{member.name}</strong></td>
                 <td>{member.role}</td>
                 <td>{member.dept_or_year}</td>
@@ -103,7 +134,7 @@ const ManageMembers = () => {
                 </td>
               </tr>
             ))}
-            {members.length === 0 && <tr><td colSpan="5" style={{ textAlign: 'center', padding: '2rem' }}>No members found.</td></tr>}
+            {members.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>No members found.</td></tr>}
           </tbody>
         </table>
       </div>

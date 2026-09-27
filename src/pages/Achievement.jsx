@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { Trophy } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 
@@ -14,15 +15,23 @@ const Achievement = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
         {achievements.map((ach) => (
-          <div key={ach.id} className="spotlight-card" style={{ padding: '2rem', display: 'flex', gap: '1.5rem', borderRadius: '1rem' }}>
-            <div className="icon-pulse bg-purple" style={{ width: '60px', height: '60px', borderRadius: '1rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Trophy size={32} />
+          <Link to={`/achievement/${ach.id}`} key={ach.id} style={{ textDecoration: 'none' }}>
+            <div className="spotlight-card" style={{ padding: '2rem', display: 'flex', gap: '1.5rem', borderRadius: '1rem', height: '100%' }}>
+              {ach.image ? (
+                <div style={{ width: '60px', height: '60px', borderRadius: '1rem', flexShrink: 0, overflow: 'hidden' }}>
+                  <img src={ach.image} alt={ach.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              ) : (
+                <div className="icon-pulse bg-purple" style={{ width: '60px', height: '60px', borderRadius: '1rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Trophy size={32} />
+                </div>
+              )}
+              <div>
+                <h3 style={{ fontSize: '1.25rem', margin: '0 0 0.5rem 0', color: 'white' }}>{ach.title}</h3>
+                <p style={{ margin: 0, color: '#94a3b8', lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ach.desc}</p>
+              </div>
             </div>
-            <div>
-              <h3 style={{ fontSize: '1.25rem', margin: '0 0 0.5rem 0', color: 'white' }}>{ach.title}</h3>
-              <p style={{ margin: 0, color: '#94a3b8', lineHeight: '1.5' }}>{ach.desc}</p>
-            </div>
-          </div>
+          </Link>
         ))}
       </div>
 

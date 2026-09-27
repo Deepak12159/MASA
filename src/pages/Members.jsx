@@ -5,9 +5,15 @@ import './Home.css'; // For common section styles
 
 const MemberCard = ({ member, icon: Icon, color }) => (
   <div className="spotlight-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', borderRadius: '1rem' }}>
-    <div className={`icon-pulse bg-${color}`} style={{ width: '50px', height: '50px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <Icon size={24} />
-    </div>
+    {member.image ? (
+      <div style={{ width: '60px', height: '60px', borderRadius: '50%', flexShrink: 0, overflow: 'hidden' }}>
+        <img src={member.image} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      </div>
+    ) : (
+      <div className={`icon-pulse bg-${color}`} style={{ width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <Icon size={24} />
+      </div>
+    )}
     <div>
       <h3 style={{ fontSize: '1.1rem', margin: 0, color: 'white' }}>{member.name}</h3>
       <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem' }}>{member.role}</p>
@@ -43,7 +49,7 @@ const AccordionSection = ({ title, icon: Icon, color, members, defaultOpen = fal
       </button>
 
       {isOpen && (
-        <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+        <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
           {members.map((m, i) => <MemberCard key={i} member={m} icon={Icon} color={color} />)}
         </div>
       )}
@@ -62,7 +68,7 @@ const Members = () => {
   return (
     <div className="container" style={{ paddingTop: '100px', paddingBottom: '100px', minHeight: '80vh' }}>
       <div className="section-header-modern" style={{ textAlign: 'center', marginBottom: '4rem' }}>
-        <h2 className="text-gradient">The MASA Family</h2>
+        <h2 className="text-gradient">The MAASA Family</h2>
         <p>Meet the dedicated faculty, students, and alumni behind Medicaps University's thriving sports culture.</p>
       </div>
 
