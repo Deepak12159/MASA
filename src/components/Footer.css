@@ -128,12 +128,17 @@
 @media (max-width: 768px) {
   .footer-content {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
   
   .brand-description {
     max-width: 100%;
   }
   
+  .contact-info span {
+    word-break: break-word;
+  }
+
   .bottom-content {
     flex-direction: column;
     gap: 1rem;

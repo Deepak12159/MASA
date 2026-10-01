@@ -22,7 +22,7 @@ const EventCard = ({ event }) => (
       </span>
       <h3 style={{ fontSize: '1.4rem', fontWeight: '700', marginBottom: '0.5rem', color: 'white' }}>{event.title}</h3>
       <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '1rem' }}>{event.desc}</p>
-      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', color: '#cbd5e1', fontSize: '0.85rem' }}>
+      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', color: '#cbd5e1', fontSize: '0.85rem' }}>
         <span>📅 {event.date}</span>
         <span>👥 {event.participants}</span>
       </div>

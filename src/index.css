@@ -56,6 +56,12 @@ button {
   padding: 0 2rem;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+}
+
 .page-wrapper {
   min-height: calc(100vh - 76px);
   padding-top: 76px;

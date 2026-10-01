@@ -41,8 +41,8 @@ const EventDetail = () => {
           }}>
             {event.status}
           </span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem', color: 'white' }}>{event.title}</h1>
-          <div style={{ display: 'flex', gap: '2rem', color: '#cbd5e1', fontSize: '1rem', marginBottom: '2rem' }}>
+          <h1 style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '700', marginBottom: '1rem', color: 'white' }}>{event.title}</h1>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem 2rem', color: '#cbd5e1', fontSize: '1rem', marginBottom: '2rem' }}>
             <span>📅 <strong>Date:</strong> {event.date}</span>
             <span>👥 <strong>Participants:</strong> {event.participants}</span>
           </div>
