@@ -106,7 +106,15 @@ const ManageMembers = () => {
               <option value="alumni">Alumni</option>
             </select>
             <input type="file" accept="image/*" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} onChange={e => setFormData({...formData, file: e.target.files[0]})} />
-            {formData.image && !formData.file && <p style={{ gridColumn: '1 / -1', fontSize: '0.8rem', color: '#94a3b8' }}>Current image will be kept if no new file is selected.</p>}
+            
+            {formData.image && !formData.file && (
+              <div style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.05)', padding: '0.5rem 1rem', borderRadius: '0.5rem' }}>
+                <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Current image will be kept.</span>
+                <button type="button" onClick={() => setFormData({...formData, image: ''})} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Trash2 size={14} /> Remove Photo
+                </button>
+              </div>
+            )}
           </div>
           <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }} disabled={uploading}>
             {uploading ? 'Uploading...' : (isEditing ? 'Update Member' : 'Save Member')}
