@@ -49,7 +49,7 @@ const AccordionSection = ({ title, icon: Icon, color, members, defaultOpen = fal
       </button>
 
       {isOpen && (
-        <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
+        <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
           {members.map((m, i) => <MemberCard key={i} member={m} icon={Icon} color={color} />)}
         </div>
       )}

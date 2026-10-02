@@ -49,7 +49,14 @@ const EventDetail = () => {
           
           <div style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.8' }}>
             <h3 style={{ color: 'white', marginBottom: '1rem' }}>Description</h3>
-            <p style={{ whiteSpace: 'pre-wrap' }}>{event.desc}</p>
+            <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              {event.desc.split(/(https?:\/\/[^\s]+)/g).map((part, index) => {
+                if (part.match(/(https?:\/\/[^\s]+)/)) {
+                  return <a key={index} href={part} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', textDecoration: 'underline' }}>{part}</a>;
+                }
+                return part;
+              })}
+            </p>
           </div>
         </div>
       </div>

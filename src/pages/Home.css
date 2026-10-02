@@ -406,18 +406,24 @@
 
 @media (max-width: 1024px) {
   .bento-split { grid-template-columns: 1fr; height: auto; }
-  .bento-sidebar, .bento-main { height: auto; }
+  .bento-sidebar { height: auto; }
+  .bento-main { height: auto; min-height: 450px; }
   .premium-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .hero-title-modern { font-size: 2.75rem; }
+  .hero-title-modern { font-size: 2.5rem; }
   .hero-actions-modern { flex-direction: column; width: 100%; }
   .btn-glow-primary, .btn-glow-secondary { width: 100%; justify-content: center; }
   .stats-container-modern { position: relative; bottom: 0; margin-top: 2rem; }
-  .stats-glass-box { flex-wrap: wrap; gap: 2rem; }
+  .stats-glass-box { flex-wrap: wrap; gap: 2rem; padding: 1.5rem; }
   .stat-item-modern { width: 40%; }
-  .bento-main-title { font-size: 2rem; }
-  .bento-main-footer { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  .stat-val-modern { font-size: 2.2rem; }
+  .bento-sidebar, .bento-main { padding: 1.5rem; }
+  .bento-main-title { font-size: 1.8rem; }
+  .bento-main-desc { font-size: 1rem; }
+  .bento-main-footer { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .meta-tag { font-size: 0.75rem; padding: 0.3rem 0.8rem; }
   .premium-grid { grid-template-columns: 1fr; }
+  .premium-grid-card { padding: 1.5rem; }
 }
