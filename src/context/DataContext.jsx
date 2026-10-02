@@ -30,7 +30,14 @@ export const DataProvider = ({ children }) => {
 
   const fetchMembers = async () => {
     const { data, error } = await supabase.from('members').select('*');
-    if (!error && data) setMembers(data);
+    if (!error && data) {
+      const sortedData = [...data].sort((a, b) => {
+        const orderA = a.display_order ?? a.id ?? 0;
+        const orderB = b.display_order ?? b.id ?? 0;
+        return orderA - orderB;
+      });
+      setMembers(sortedData);
+    }
   };
 
   const fetchAchievements = async () => {
@@ -104,6 +111,14 @@ export const DataProvider = ({ children }) => {
     const { error } = await supabase.from('members').delete().eq('id', id);
     if (!error) setMembers(members.filter(m => m.id !== id));
   };
+  const updateMembersBulk = async (updatedList) => {
+    const { error } = await supabase.from('members').upsert(updatedList);
+    if (error) {
+      alert("Database Error: " + error.message + "\n(Please make sure you have added the 'display_order' column!)");
+    } else {
+      fetchMembers();
+    }
+  };
 
   // --- Achievements CRUD ---
   const addAchievement = async (achievement) => {
@@ -165,7 +180,7 @@ export const DataProvider = ({ children }) => {
       events, media, members, achievements, aboutContent,
       addEvent, updateEvent, removeEvent, 
       addMedia, updateMedia, removeMedia,
-      addMember, updateMember, removeMember,
+      addMember, updateMember, removeMember, updateMembersBulk,
       addAchievement, updateAchievement, removeAchievement,
       updateAboutContent,
       uploadFile

@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { DataContext } from '../../context/DataContext';
 import { AuthContext } from '../../context/AuthContext';
-import { Trash2, Plus, Edit2 } from 'lucide-react';
+import { Trash2, Plus, Edit2, ArrowUp, ArrowDown } from 'lucide-react';
 
 const ManageMembers = () => {
   const { user } = useContext(AuthContext);
-  const { members, addMember, updateMember, removeMember, uploadFile } = useContext(DataContext);
+  const { members, addMember, updateMember, removeMember, updateMembersBulk, uploadFile } = useContext(DataContext);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -63,6 +63,23 @@ const ManageMembers = () => {
     }
   };
 
+  const handleMove = (index, direction) => {
+    if (searchTerm) {
+      alert("Please clear the search box to reorder members.");
+      return;
+    }
+    const newMembers = [...members];
+    if (direction === -1 && index > 0) {
+      [newMembers[index - 1], newMembers[index]] = [newMembers[index], newMembers[index - 1]];
+    } else if (direction === 1 && index < newMembers.length - 1) {
+      [newMembers[index], newMembers[index + 1]] = [newMembers[index + 1], newMembers[index]];
+    } else {
+      return;
+    }
+    const updatedList = newMembers.map((m, i) => ({ ...m, display_order: i }));
+    updateMembersBulk(updatedList);
+  };
+
   return (
     <div className="manage-page">
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -99,7 +116,7 @@ const ManageMembers = () => {
       )}
 
       <div className="data-table-container">
-        <div style={{ padding: '1rem' }}>
+        <div style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <input 
             type="text" 
             placeholder="Search members by name or role..." 
@@ -108,6 +125,7 @@ const ManageMembers = () => {
             onChange={(e) => setSearchTerm(e.target.value)} 
             style={{ width: '100%', maxWidth: '400px', ...inputStyle }}
           />
+          <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>* Use Up/Down arrows to reorder members within their categories.</span>
         </div>
         <table className="data-table">
           <thead>
@@ -139,10 +157,19 @@ const ManageMembers = () => {
                   </span>
                 </td>
                 <td>
+                  {user?.role !== 'technical' && !searchTerm && (
+                    <>
+                      <button className="action-btn" title="Move Up" style={{ marginRight: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' }} onClick={() => handleMove(members.findIndex(m => m.id === member.id), -1)}>
+                        <ArrowUp size={16} />
+                      </button>
+                      <button className="action-btn" title="Move Down" style={{ marginRight: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' }} onClick={() => handleMove(members.findIndex(m => m.id === member.id), 1)}>
+                        <ArrowDown size={16} />
+                      </button>
+                    </>
+                  )}
                   <button className="action-btn" title="Edit" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(member)}>
                     <Edit2 size={16} />
                   </button>
-                  {/* Moving Options / Category change could also be handled via edit, but adding quick actions could be requested later */}
                   {user?.role !== 'technical' && (
                     <button className="action-btn btn-danger" title="Delete" onClick={() => removeMember(member.id)}>
                       <Trash2 size={16} />
