@@ -32,9 +32,11 @@ export const DataProvider = ({ children }) => {
     const { data, error } = await supabase.from('members').select('*');
     if (!error && data) {
       const sortedData = [...data].sort((a, b) => {
-        const orderA = a.display_order ?? a.id ?? 0;
-        const orderB = b.display_order ?? b.id ?? 0;
-        return orderA - orderB;
+        const orderA = a.display_order !== null && a.display_order !== undefined ? a.display_order : 9999;
+        const orderB = b.display_order !== null && b.display_order !== undefined ? b.display_order : 9999;
+        if (orderA !== orderB) return orderA - orderB;
+        // Fallback to name sorting if display_order is same or missing
+        return a.name?.localeCompare(b.name);
       });
       setMembers(sortedData);
     }
@@ -112,11 +114,12 @@ export const DataProvider = ({ children }) => {
     if (!error) setMembers(members.filter(m => m.id !== id));
   };
   const updateMembersBulk = async (updatedList) => {
+    // Optimistic UI update
+    setMembers(updatedList);
     const { error } = await supabase.from('members').upsert(updatedList);
     if (error) {
       alert("Database Error: " + error.message + "\n(Please make sure you have added the 'display_order' column!)");
-    } else {
-      fetchMembers();
+      fetchMembers(); // Revert on error
     }
   };
 
