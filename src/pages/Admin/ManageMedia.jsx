@@ -10,18 +10,18 @@ const ManageMedia = () => {
   const [isEditing, setIsEditing] = useState(null); // stores ID of item being edited
   
   const [formData, setFormData] = useState({
-    title: '', url: '', type: 'photo', file: null
+    title: '', url: '', type: 'photo', files: []
   });
   const [uploading, setUploading] = useState(false);
 
   const resetForm = () => {
-    setFormData({ title: '', url: '', type: 'photo', file: null });
+    setFormData({ title: '', url: '', type: 'photo', files: [] });
     setIsAdding(false);
     setIsEditing(null);
   };
 
   const handleEditClick = (item) => {
-    setFormData({ ...item, file: null });
+    setFormData({ ...item, files: [] });
     setIsEditing(item.id);
     setIsAdding(true);
   };
@@ -31,26 +31,38 @@ const ManageMedia = () => {
     if (formData.title) {
       setUploading(true);
 
-      let finalUrl = formData.url || 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800';
+      if (formData.files && formData.files.length > 0) {
+        for (let i = 0; i < formData.files.length; i++) {
+          const file = formData.files[i];
+          const uploadedUrl = await uploadFile(file, 'gallery');
+          if (uploadedUrl) {
+            const payload = {
+              title: formData.title,
+              type: formData.type,
+              url: uploadedUrl
+            };
+            if (isEditing && i === 0) {
+              updateMedia(isEditing, payload);
+            } else {
+              addMedia(payload);
+            }
+          }
+        }
+      } else {
+        const finalUrl = formData.url || 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=800';
+        const payload = {
+          title: formData.title,
+          type: formData.type,
+          url: finalUrl
+        };
 
-      if (formData.file) {
-        const uploadedUrl = await uploadFile(formData.file, 'gallery');
-        if (uploadedUrl) {
-          finalUrl = uploadedUrl;
+        if (isEditing) {
+          updateMedia(isEditing, payload);
+        } else {
+          addMedia(payload);
         }
       }
 
-      const payload = {
-        title: formData.title,
-        type: formData.type,
-        url: finalUrl
-      };
-
-      if (isEditing) {
-        updateMedia(isEditing, payload);
-      } else {
-        addMedia(payload);
-      }
       setUploading(false);
       resetForm();
     }
@@ -72,13 +84,13 @@ const ManageMedia = () => {
         <form onSubmit={handleSubmit} className="stat-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
           <h4>{isEditing ? 'Edit Media' : 'Upload New Media'}</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <input type="text" placeholder="Title/Caption" className="input-field" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required style={inputStyle}/>
+            <input type="text" placeholder="Title/Caption (Event Name)" className="input-field" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required style={inputStyle}/>
             <select className="input-field" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={inputStyle}>
               <option value="photo">Photo</option>
               <option value="video">Video</option>
             </select>
-            <input type="file" accept="image/*,video/*" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} onChange={e => setFormData({...formData, file: e.target.files[0]})} />
-            {formData.url && !formData.file && <p style={{ gridColumn: '1 / -1', fontSize: '0.8rem', color: '#94a3b8' }}>Current file will be kept if no new file is selected.</p>}
+            <input type="file" multiple accept="image/*,video/*" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} onChange={e => setFormData({...formData, files: Array.from(e.target.files)})} />
+            {formData.url && (!formData.files || formData.files.length === 0) && <p style={{ gridColumn: '1 / -1', fontSize: '0.8rem', color: '#94a3b8' }}>Current file will be kept if no new file is selected.</p>}
           </div>
           <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }} disabled={uploading}>
             {uploading ? 'Uploading...' : (isEditing ? 'Update Media' : 'Save Media')}

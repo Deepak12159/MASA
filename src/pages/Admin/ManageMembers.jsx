@@ -13,6 +13,12 @@ const ManageMembers = () => {
   const [formData, setFormData] = useState({
     name: '', role: '', dept_or_year: '', category: 'faculty', image: '', file: null
   });
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredMembers = members.filter(m => 
+    m.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    m.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const resetForm = () => {
     setFormData({ name: '', role: '', dept_or_year: '', category: 'faculty', image: '', file: null });
@@ -93,6 +99,16 @@ const ManageMembers = () => {
       )}
 
       <div className="data-table-container">
+        <div style={{ padding: '1rem' }}>
+          <input 
+            type="text" 
+            placeholder="Search members by name or role..." 
+            className="input-field" 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} 
+            style={{ width: '100%', maxWidth: '400px', ...inputStyle }}
+          />
+        </div>
         <table className="data-table">
           <thead>
             <tr>
@@ -105,7 +121,7 @@ const ManageMembers = () => {
             </tr>
           </thead>
           <tbody>
-            {members.map(member => (
+            {filteredMembers.map(member => (
               <tr key={member.id}>
                 <td>
                   {member.image ? (
@@ -123,18 +139,19 @@ const ManageMembers = () => {
                   </span>
                 </td>
                 <td>
-                  <button className="action-btn" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(member)}>
+                  <button className="action-btn" title="Edit" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(member)}>
                     <Edit2 size={16} />
                   </button>
+                  {/* Moving Options / Category change could also be handled via edit, but adding quick actions could be requested later */}
                   {user?.role !== 'technical' && (
-                    <button className="action-btn btn-danger" onClick={() => removeMember(member.id)}>
+                    <button className="action-btn btn-danger" title="Delete" onClick={() => removeMember(member.id)}>
                       <Trash2 size={16} />
                     </button>
                   )}
                 </td>
               </tr>
             ))}
-            {members.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>No members found.</td></tr>}
+            {filteredMembers.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>No members found.</td></tr>}
           </tbody>
         </table>
       </div>
