@@ -157,7 +157,7 @@ const ManageMembers = () => {
                   </span>
                 </td>
                 <td>
-                  {user?.role !== 'technical' && !searchTerm && (
+                  {!searchTerm && (
                     <>
                       <button className="action-btn" title="Move Up" style={{ marginRight: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' }} onClick={() => handleMove(members.findIndex(m => m.id === member.id), -1)}>
                         <ArrowUp size={16} />
