@@ -14,6 +14,11 @@ const ManageMembers = () => {
     name: '', role: '', dept_or_year: '', category: 'faculty', image: '', file: null
   });
   const [searchTerm, setSearchTerm] = useState("");
+  const [openCategories, setOpenCategories] = useState({
+    faculty: true, core: true, alumni: true
+  });
+  
+  const toggleCategory = (cat) => setOpenCategories(prev => ({...prev, [cat]: !prev[cat]}));
 
   const filteredMembers = members.filter(m => 
     m.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -68,14 +73,23 @@ const ManageMembers = () => {
       alert("Please clear the search box to reorder members.");
       return;
     }
+    
+    const memberToMove = members[index];
+    const catMembers = members.filter(m => m.category === memberToMove.category);
+    const catIndex = catMembers.findIndex(m => m.id === memberToMove.id);
+    
     const newMembers = [...members];
-    if (direction === -1 && index > 0) {
-      [newMembers[index - 1], newMembers[index]] = [newMembers[index], newMembers[index - 1]];
-    } else if (direction === 1 && index < newMembers.length - 1) {
-      [newMembers[index], newMembers[index + 1]] = [newMembers[index + 1], newMembers[index]];
+    
+    if (direction === -1 && catIndex > 0) {
+      const otherGlobalIndex = members.findIndex(m => m.id === catMembers[catIndex - 1].id);
+      [newMembers[otherGlobalIndex], newMembers[index]] = [newMembers[index], newMembers[otherGlobalIndex]];
+    } else if (direction === 1 && catIndex < catMembers.length - 1) {
+      const otherGlobalIndex = members.findIndex(m => m.id === catMembers[catIndex + 1].id);
+      [newMembers[index], newMembers[otherGlobalIndex]] = [newMembers[otherGlobalIndex], newMembers[index]];
     } else {
       return;
     }
+    
     const updatedList = newMembers.map((m, i) => ({ ...m, display_order: i }));
     updateMembersBulk(updatedList);
   };
@@ -146,45 +160,59 @@ const ManageMembers = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredMembers.map(member => (
-              <tr key={member.id}>
-                <td>
-                  {member.image ? (
-                    <img src={member.image} alt={member.name} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
-                  )}
-                </td>
-                <td><strong>{member.name}</strong></td>
-                <td>{member.role}</td>
-                <td>{member.dept_or_year}</td>
-                <td>
-                  <span style={{ padding: '0.2rem 0.5rem', borderRadius: '1rem', fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)' }}>
-                    {member.category}
-                  </span>
-                </td>
-                <td>
-                  {!searchTerm && (
-                    <>
-                      <button className="action-btn" title="Move Up" style={{ marginRight: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' }} onClick={() => handleMove(members.findIndex(m => m.id === member.id), -1)}>
-                        <ArrowUp size={16} />
-                      </button>
-                      <button className="action-btn" title="Move Down" style={{ marginRight: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' }} onClick={() => handleMove(members.findIndex(m => m.id === member.id), 1)}>
-                        <ArrowDown size={16} />
-                      </button>
-                    </>
-                  )}
-                  <button className="action-btn" title="Edit" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(member)}>
-                    <Edit2 size={16} />
-                  </button>
-                  {user?.role !== 'technical' && (
-                    <button className="action-btn btn-danger" title="Delete" onClick={() => removeMember(member.id)}>
-                      <Trash2 size={16} />
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
+            {[{id: 'faculty', label: 'Faculty Coordinators'}, {id: 'core', label: 'Core Members'}, {id: 'alumni', label: 'Alumni'}].map(cat => {
+              const catMembers = filteredMembers.filter(m => m.category === cat.id);
+              if (catMembers.length === 0) return null;
+              
+              return (
+                <React.Fragment key={cat.id}>
+                  <tr style={{ cursor: 'pointer', background: 'rgba(255,255,255,0.08)' }} onClick={() => toggleCategory(cat.id)}>
+                    <td colSpan="6" style={{ fontWeight: 'bold', padding: '1rem', borderTop: '2px solid rgba(255,255,255,0.1)' }}>
+                      {openCategories[cat.id] ? '▼' : '▶'} {cat.label} ({catMembers.length})
+                    </td>
+                  </tr>
+                  {openCategories[cat.id] && catMembers.map(member => (
+                    <tr key={member.id}>
+                      <td>
+                        {member.image ? (
+                          <img src={member.image} alt={member.name} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
+                        )}
+                      </td>
+                      <td><strong>{member.name}</strong></td>
+                      <td>{member.role}</td>
+                      <td>{member.dept_or_year}</td>
+                      <td>
+                        <span style={{ padding: '0.2rem 0.5rem', borderRadius: '1rem', fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)' }}>
+                          {member.category}
+                        </span>
+                      </td>
+                      <td>
+                        {!searchTerm && (
+                          <>
+                            <button className="action-btn" title="Move Up" style={{ marginRight: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' }} onClick={() => handleMove(members.findIndex(m => m.id === member.id), -1)}>
+                              <ArrowUp size={16} />
+                            </button>
+                            <button className="action-btn" title="Move Down" style={{ marginRight: '0.5rem', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' }} onClick={() => handleMove(members.findIndex(m => m.id === member.id), 1)}>
+                              <ArrowDown size={16} />
+                            </button>
+                          </>
+                        )}
+                        <button className="action-btn" title="Edit" style={{ marginRight: '0.5rem', background: 'rgba(255,255,255,0.1)' }} onClick={() => handleEditClick(member)}>
+                          <Edit2 size={16} />
+                        </button>
+                        {user?.role !== 'technical' && (
+                          <button className="action-btn btn-danger" title="Delete" onClick={() => removeMember(member.id)}>
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+              );
+            })}
             {filteredMembers.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem' }}>No members found.</td></tr>}
           </tbody>
         </table>
