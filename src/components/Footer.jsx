@@ -14,7 +14,7 @@ const Footer = () => {
             Empowering students through technology and innovation at Medicaps University. Join our athletic community.
           </p>
           <div className="social-links">
-            <a href="https://www.instagram.com/medicaps_sports?stkn=eDE3c2huaGoyeWtn" target="_blank" rel="noopener noreferrer" className="social-icon"><Instagram size={20}/></a>
+            <a href="https://www.instagram.com/medicaps_sports/" target="_blank" rel="noopener noreferrer" className="social-icon"><Instagram size={20}/></a>
             <a href="#" className="social-icon"><Linkedin size={20}/></a>
           </div>
         </div>
