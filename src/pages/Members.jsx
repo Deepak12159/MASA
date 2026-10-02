@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { Shield, Star, Users, ChevronDown, ChevronUp, GraduationCap } from 'lucide-react';
+import React, { useContext } from 'react';
+import { Shield, Star, Users, GraduationCap } from 'lucide-react';
 import { DataContext } from '../context/DataContext';
 import './Home.css'; // For common section styles
 
@@ -24,35 +24,19 @@ const MemberCard = ({ member, icon: Icon, color }) => (
   </div>
 );
 
-const AccordionSection = ({ title, icon: Icon, color, members, defaultOpen = false }) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
+const MemberSection = ({ title, icon: Icon, color, members }) => {
   if (!members || members.length === 0) return null;
 
   return (
-    <div style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', overflow: 'hidden', transition: 'all 0.3s ease' }}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          width: '100%', padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: isOpen ? 'rgba(255,255,255,0.03)' : 'transparent', border: 'none', color: 'white', cursor: 'pointer', textAlign: 'left',
-          transition: 'all 0.2s ease'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div className={`text-${color}`}><Icon size={24} /></div>
-          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '600' }}>{title} ({members.length})</h3>
-        </div>
-        <div style={{ color: '#94a3b8' }}>
-          {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-        </div>
-      </button>
+    <div style={{ marginBottom: '3rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className={`text-${color}`}><Icon size={24} /></div>
+        <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600', color: 'white' }}>{title} ({members.length})</h3>
+      </div>
 
-      {isOpen && (
-        <div style={{ padding: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-          {members.map((m, i) => <MemberCard key={i} member={m} icon={Icon} color={color} />)}
-        </div>
-      )}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+        {members.map((m, i) => <MemberCard key={i} member={m} icon={Icon} color={color} />)}
+      </div>
     </div>
   );
 };
@@ -73,36 +57,25 @@ const Members = () => {
       </div>
 
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        <AccordionSection
+        <MemberSection
           title="Faculty Coordinators"
           icon={Shield}
           color="blue"
           members={faculty}
-          defaultOpen={true}
         />
 
-        <AccordionSection
+        <MemberSection
           title="Core Members"
           icon={Star}
           color="purple"
           members={core}
-          defaultOpen={false}
         />
 
-        <AccordionSection
-          title="Team Members"
-          icon={Users}
-          color="green"
-          members={team}
-          defaultOpen={false}
-        />
-
-        <AccordionSection
+        <MemberSection
           title="Alumni Directory"
           icon={GraduationCap}
           color="orange"
           members={alumni}
-          defaultOpen={false}
         />
 
         {members.length === 0 && (

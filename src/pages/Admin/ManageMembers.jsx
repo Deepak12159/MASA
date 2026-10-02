@@ -103,7 +103,6 @@ const ManageMembers = () => {
             <select className="input-field" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={inputStyle}>
               <option value="faculty">Faculty Coordinator</option>
               <option value="core">Core Member</option>
-              <option value="team">Team Member</option>
               <option value="alumni">Alumni</option>
             </select>
             <input type="file" accept="image/*" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} onChange={e => setFormData({...formData, file: e.target.files[0]})} />
