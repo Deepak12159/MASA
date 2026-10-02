@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { DataContext } from '../context/DataContext';
 import { ArrowRight, Activity, Calendar, Trophy, Users, Zap, Medal } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import './Home.css';
@@ -65,6 +66,11 @@ const SpotlightCard = ({ children, className = "" }) => {
 const Home = () => {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [0, 300]);
+  const { events } = useContext(DataContext);
+  
+  const activeEvents = events.filter(e => e.status === 'upcoming' || e.status === 'ongoing');
+  const featuredEvent = activeEvents.length > 0 ? activeEvents[0] : null;
+  const sidebarEvents = activeEvents.slice(1, 4);
 
   const fadeUp = {
     hidden: { opacity: 0, y: 50 },
@@ -159,35 +165,42 @@ const Home = () => {
             <SpotlightCard className="bento-sidebar">
               <h3 className="sidebar-title-modern">Live & Upcoming</h3>
               <ul className="sidebar-menu-modern">
-                <li className="active-item">
-                  <div className="icon-pulse bg-blue"><Activity size={14}/></div>
-                  <span>Cricket Final Cup</span>
-                </li>
-                <li>
-                  <div className="icon-pulse bg-purple"><Calendar size={14}/></div>
-                  <span>Annual Athletics Meet</span>
-                </li>
-                <li>
-                  <div className="icon-pulse bg-orange"><Medal size={14}/></div>
-                  <span>Inter-College Basketball</span>
-                </li>
+                {sidebarEvents.length > 0 ? sidebarEvents.map((ev, idx) => (
+                  <li key={ev.id} className={idx === 0 ? "active-item" : ""}>
+                    <div className={`icon-pulse bg-${idx === 0 ? 'blue' : idx === 1 ? 'purple' : 'orange'}`}>
+                      <Calendar size={14}/>
+                    </div>
+                    <span>{ev.title}</span>
+                  </li>
+                )) : (
+                  <li style={{ color: '#94a3b8' }}>More events coming soon...</li>
+                )}
               </ul>
             </SpotlightCard>
           </motion.div>
 
           <motion.div variants={fadeUp} style={{ height: '100%' }}>
-            <SpotlightCard className="bento-main">
+            <SpotlightCard 
+              className="bento-main" 
+              style={featuredEvent && featuredEvent.image ? { background: `linear-gradient(to top, rgba(15, 17, 26, 0.95), rgba(15, 17, 26, 0.4)), url(${featuredEvent.image}) center/cover` } : {}}
+            >
               <div className="bento-main-hero">
                 <div className="bento-main-badge">Featured Event</div>
-                <h3 className="bento-main-title">Inter-College Cricket Tournament</h3>
-                <p className="bento-main-desc">The most anticipated cricket clash of the season. Witness 500+ athletes competing for the ultimate championship trophy.</p>
+                <h3 className="bento-main-title">{featuredEvent ? featuredEvent.title : "Stay Tuned for Tournaments"}</h3>
+                <p className="bento-main-desc" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {featuredEvent ? featuredEvent.desc : "We are gearing up for the next season. Keep an eye out for updates on upcoming matches."}
+                </p>
                 
                 <div className="bento-main-footer">
                   <div className="bento-main-meta">
-                    <span className="meta-tag">Finals</span>
-                    <span className="meta-tag">Main Ground</span>
+                    {featuredEvent && <span className="meta-tag" style={featuredEvent.status === 'ongoing' ? { color: '#ef4444', border: '1px solid #ef4444' } : {}}>{featuredEvent.status === 'ongoing' ? '🔴 Live Now' : 'Upcoming'}</span>}
+                    {featuredEvent && <span className="meta-tag">{featuredEvent.date}</span>}
                   </div>
-                  <button className="btn-modern-solid">View Event <ArrowRight size={16}/></button>
+                  {featuredEvent && (
+                    <Link to={`/events/${featuredEvent.id}`} className="btn-modern-solid" style={{ textDecoration: 'none' }}>
+                      View Event <ArrowRight size={16}/>
+                    </Link>
+                  )}
                 </div>
               </div>
             </SpotlightCard>

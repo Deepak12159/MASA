@@ -289,7 +289,7 @@
   flex-direction: column;
   justify-content: flex-end;
   /* Add an image overlay vibe */
-  background: linear-gradient(to top, rgba(15, 17, 26, 0.95), rgba(15, 17, 26, 0.4)), url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=2000&auto=format&fit=crop') center/cover !important;
+  background: linear-gradient(to top, rgba(15, 17, 26, 0.95), rgba(15, 17, 26, 0.4)), url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=2000&auto=format&fit=crop') center/cover;
 }
 
 .bento-main-badge {
