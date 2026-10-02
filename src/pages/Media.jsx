@@ -25,11 +25,14 @@ const Media = () => {
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '3rem'
         }}>
-          {Object.entries(folders).map(([title, items]) => (
+          {Object.entries(folders).map(([title, items]) => {
+            const previewItem = items.find(i => i.type !== 'drive') || items[0];
+            const previewUrl = previewItem.type === 'drive' ? 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800' : previewItem.url;
+            return (
             <div key={title} className="spotlight-card" style={{ padding: '0', overflow: 'hidden', borderRadius: '1rem', cursor: 'pointer' }} onClick={() => setSelectedFolder(title)}>
               <div style={{ position: 'relative', paddingBottom: '75%' }}>
                 <img
-                  src={items[0].url}
+                  src={previewUrl}
                   alt={title}
                   style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                 />
@@ -42,7 +45,7 @@ const Media = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )})}
 
           {Object.keys(folders).length === 0 && (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#94a3b8', padding: '4rem' }}>
@@ -64,12 +67,23 @@ const Media = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
             {folders[selectedFolder].map(item => (
               <div key={item.id} className="spotlight-card" style={{ padding: '0', overflow: 'hidden', borderRadius: '1rem' }}>
-                <div style={{ position: 'relative', paddingBottom: '75%' }}>
-                  <img
-                    src={item.url}
-                    alt={item.title}
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
+                <div style={{ position: 'relative', paddingBottom: '75%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.02)' }}>
+                  {item.type === 'drive' ? (
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', textAlign: 'center' }}>
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#3b82f6', marginBottom: '1rem' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      <h4 style={{ color: 'white', marginBottom: '1rem' }}>Google Drive Album</h4>
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="btn-glow-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', textDecoration: 'none' }}>
+                        Open in Drive
+                      </a>
+                    </div>
+                  ) : (
+                    <img
+                      src={item.url}
+                      alt={item.title}
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  )}
+                  
                   <div style={{
                     position: 'absolute', bottom: 0, left: 0, width: '100%', padding: '1rem',
                     background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)', color: 'white'

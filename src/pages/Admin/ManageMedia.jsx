@@ -88,12 +88,20 @@ const ManageMedia = () => {
             <select className="input-field" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} style={inputStyle}>
               <option value="photo">Photo</option>
               <option value="video">Video</option>
+              <option value="drive">Google Drive Link</option>
             </select>
-            <input type="file" multiple accept="image/*,video/*" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} onChange={e => setFormData({...formData, files: Array.from(e.target.files)})} />
-            {formData.url && (!formData.files || formData.files.length === 0) && <p style={{ gridColumn: '1 / -1', fontSize: '0.8rem', color: '#94a3b8' }}>Current file will be kept if no new file is selected.</p>}
+            
+            {formData.type === 'drive' ? (
+              <input type="url" placeholder="Paste Google Drive Folder Link here" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} value={formData.url} onChange={e => setFormData({...formData, url: e.target.value})} required />
+            ) : (
+              <>
+                <input type="file" multiple accept="image/*,video/*" className="input-field" style={{ gridColumn: '1 / -1', ...inputStyle }} onChange={e => setFormData({...formData, files: Array.from(e.target.files)})} />
+                {formData.url && (!formData.files || formData.files.length === 0) && <p style={{ gridColumn: '1 / -1', fontSize: '0.8rem', color: '#94a3b8' }}>Current file will be kept if no new file is selected.</p>}
+              </>
+            )}
           </div>
           <button type="submit" className="btn-glow-primary" style={{ alignSelf: 'flex-start' }} disabled={uploading}>
-            {uploading ? 'Uploading...' : (isEditing ? 'Update Media' : 'Save Media')}
+            {uploading ? 'Processing...' : (isEditing ? 'Update Media' : 'Save Media')}
           </button>
         </form>
       )}
