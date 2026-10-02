@@ -34,7 +34,7 @@ const ManageMembers = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.name && formData.role) {
+    if (formData.name) {
       setUploading(true);
       let finalImageUrl = formData.image;
       
@@ -97,7 +97,7 @@ const ManageMembers = () => {
           <h4>{isEditing ? 'Edit Member' : 'Add New Member'}</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <input type="text" placeholder="Full Name" className="input-field" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required style={inputStyle}/>
-            <input type="text" placeholder="Role (e.g. President, Volunteer)" className="input-field" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} required style={inputStyle}/>
+            <input type="text" placeholder="Role (Optional)" className="input-field" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} style={inputStyle}/>
             
             <input type="text" placeholder="Dept or Year (e.g. 3rd Year, Management)" className="input-field" value={formData.dept_or_year} onChange={e => setFormData({...formData, dept_or_year: e.target.value})} style={inputStyle}/>
             <select className="input-field" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={inputStyle}>
